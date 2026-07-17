@@ -9,7 +9,7 @@ in three stages of decreasing confidence:
   3. fuzzy     -- max(Jaro-Winkler, Levenshtein) similarity above a threshold,
                   closest pairs matched first
 
-Unmatched teacher names are "missing", unmatched student names are "extra",
+Unmatched expected names are "missing", unmatched current names are "extra",
 and a 0-100 score is computed from per-stage weights minus penalties.
 """
 import json
@@ -175,14 +175,14 @@ DEFAULT_PENALTIES = {'extra': 1.67, 'missing': 0}
 DEFAULT_SIMILARITY_THRESHOLD = 0.8
 
 
-def compare_entities(teacher_names, student_names,
+def compare_entities(expected_names, current_names,
                      weights=None, penalties=None,
                      similarity_threshold=DEFAULT_SIMILARITY_THRESHOLD,
                      custom_ontology=(), ontology=None):
-    """Match student entity names against teacher reference names.
+    """Match current entity names against expected reference names.
 
     Returns {'score', 'matched', 'missing', 'extra', 'scoring_breakdown'};
-    each matched entry has teacher/student raw names, the match type
+    each matched entry has expected/current raw names, the match type
     ('exact' | 'semantic' | 'fuzzy'), a 0-1 score and a details string.
     """
     weights = {**DEFAULT_WEIGHTS, **(weights or {})}
@@ -194,33 +194,33 @@ def compare_entities(teacher_names, student_names,
         return [{'raw': n, 'normalized': normalize_name(n), 'matched': False}
                 for n in (names or []) if n and n.strip()]
 
-    teachers = entries(teacher_names)
-    students = entries(student_names)
+    expected = entries(expected_names)
+    current = entries(current_names)
     matched = []
 
     # Stage 1: exact matches on normalized form
-    for s in students:
-        for t in teachers:
+    for s in current:
+        for t in expected:
             if not t['matched'] and not s['matched'] and s['normalized'] == t['normalized']:
                 t['matched'] = s['matched'] = True
                 matched.append({
-                    'teacher': t['raw'], 'student': s['raw'],
+                    'expected': t['raw'], 'current': s['raw'],
                     'type': 'exact', 'score': 1.0,
                     'details': 'Exact match (normalized)',
                 })
                 break
 
     # Stage 2: semantic matches via ontology synonym groups
-    for s in students:
+    for s in current:
         if s['matched']:
             continue
-        for t in teachers:
+        for t in expected:
             if t['matched']:
                 continue
             if are_synonyms(s['normalized'], t['normalized'], custom_ontology, ontology):
                 t['matched'] = s['matched'] = True
                 matched.append({
-                    'teacher': t['raw'], 'student': s['raw'],
+                    'expected': t['raw'], 'current': s['raw'],
                     'type': 'semantic', 'score': 1.0,
                     'details': f"Semantic equivalence ('{t['normalized']}' ~ '{s['normalized']}')",
                 })
@@ -228,10 +228,10 @@ def compare_entities(teacher_names, student_names,
 
     # Stage 3: fuzzy matches, closest pairs first
     candidates = []
-    for s in students:
+    for s in current:
         if s['matched']:
             continue
-        for t in teachers:
+        for t in expected:
             if t['matched']:
                 continue
             similarity = max(
@@ -246,26 +246,26 @@ def compare_entities(teacher_names, student_names,
         if not s['matched'] and not t['matched']:
             s['matched'] = t['matched'] = True
             matched.append({
-                'teacher': t['raw'], 'student': s['raw'],
+                'expected': t['raw'], 'current': s['raw'],
                 'type': 'fuzzy', 'score': similarity,
                 'details': f'Fuzzy match ({similarity * 100:.0f}% similarity)',
             })
 
-    missing = [t['raw'] for t in teachers if not t['matched']]
-    extra = [s['raw'] for s in students if not s['matched']]
+    missing = [t['raw'] for t in expected if not t['matched']]
+    extra = [s['raw'] for s in current if not s['matched']]
 
-    # Scoring: weighted matches over teacher count, minus missing/extra penalties
+    # Scoring: weighted matches over expected count, minus missing/extra penalties
     counts = {'exact': 0, 'semantic': 0, 'fuzzy': 0}
     match_score_sum = 0.0
     for m in matched:
         counts[m['type']] += 1
         match_score_sum += weights[m['type']] / 100
 
-    total_teacher_count = len(teachers)
-    if total_teacher_count > 0:
-        base_score = match_score_sum / total_teacher_count * 100
+    total_expected_count = len(expected)
+    if total_expected_count > 0:
+        base_score = match_score_sum / total_expected_count * 100
     else:
-        base_score = 100.0 if not students else 0.0
+        base_score = 100.0 if not current else 0.0
 
     total_missing_penalty = len(missing) * penalties['missing']
     total_extra_penalty = len(extra) * penalties['extra']
@@ -278,7 +278,7 @@ def compare_entities(teacher_names, student_names,
         'missing': missing,
         'extra': extra,
         'scoring_breakdown': {
-            'total_teacher_count': total_teacher_count,
+            'total_expected_count': total_expected_count,
             'matched_count': len(matched),
             'exact_count': counts['exact'],
             'semantic_count': counts['semantic'],
@@ -294,3 +294,4 @@ def compare_entities(teacher_names, student_names,
             'final_score': score,
         },
     }
+

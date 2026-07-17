@@ -11,6 +11,7 @@ import {
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import RightSidebar from './components/RightSidebar';
 import '@xyflow/react/dist/style.css';
 
 const initialNodes = [];
@@ -49,6 +50,8 @@ export default function App() {
             <MiniMap />
           </ReactFlow>
         </div>
+        
+        <RightSidebar />
       </main>
     </div>
   );

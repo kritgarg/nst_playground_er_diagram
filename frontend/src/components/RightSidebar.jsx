@@ -23,12 +23,59 @@ export default function RightSidebar({ tables = [], onAddTable, onUpdateTable, o
 
   return (
     <aside className="w-80 min-w-[320px] h-full bg-neutral-0 border-l border-neutral-300 flex flex-col box-border relative overflow-hidden">
+  const [width, setWidth] = useState(320);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = width;
+
+    const handleMouseMove = (moveEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const newWidth = Math.max(260, Math.min(600, startWidth - deltaX));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'default';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = 'col-resize';
+  };
+
+  return (
+    <aside
+      className="h-full bg-neutral-0 border-l border-neutral-300 flex flex-col box-border relative"
+      style={{ width: `${width}px`, minWidth: '260px', maxWidth: '600px' }}
+    >
+      {/* Resizer Handle */}
+      <div
+        className="absolute top-0 left-0 h-full cursor-col-resize z-50 group flex items-center justify-center -translate-x-1/2"
+        style={{ width: '20px' }}
+        onMouseDown={handleMouseDown}
+      >
+        {/* Wide gray strip */}
+        <div className="w-full h-full bg-neutral-200 group-hover:bg-neutral-300 transition-colors duration-150 flex items-center justify-center">
+          {/* Three dot grip inside the strip */}
+          <div className="flex flex-col gap-[5px] items-center justify-center">
+            <span className="w-[4px] h-[4px] rounded-full bg-neutral-500 group-hover:bg-neutral-700 transition-colors"></span>
+            <span className="w-[4px] h-[4px] rounded-full bg-neutral-500 group-hover:bg-neutral-700 transition-colors"></span>
+            <span className="w-[4px] h-[4px] rounded-full bg-neutral-500 group-hover:bg-neutral-700 transition-colors"></span>
+          </div>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex h-12 border-b border-neutral-300 box-border shrink-0">
         <button
           className={`flex-1 bg-transparent border-none font-sans text-[14px] font-bold cursor-pointer flex items-center justify-center relative transition-colors duration-200 ${
             activeTab === 'tables'
               ? 'text-brand-500 after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[2px] after:bg-brand-500'
+              ? 'text-brand-500'
               : 'text-neutral-700 hover:text-neutral-900'
           }`}
           onClick={() => switchTab('tables')}
@@ -39,6 +86,7 @@ export default function RightSidebar({ tables = [], onAddTable, onUpdateTable, o
           className={`flex-1 bg-transparent border-none font-sans text-[14px] font-bold cursor-pointer flex items-center justify-center relative transition-colors duration-200 ${
             activeTab === 'relations'
               ? 'text-brand-500 after:content-[""] after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[2px] after:bg-brand-500'
+              ? 'text-brand-500'
               : 'text-neutral-700 hover:text-neutral-900'
           }`}
           onClick={() => switchTab('relations')}
@@ -49,6 +97,8 @@ export default function RightSidebar({ tables = [], onAddTable, onUpdateTable, o
 
       {/* Action Bar */}
       <div className="flex gap-3 p-4 box-border items-center shrink-0">
+      <div className="flex gap-3 p-4 items-center">
+      <div className="flex gap-3 p-4 box-border items-center">
         {activeTab === 'tables' && (
           <button
             className="h-9 flex items-center gap-1.5 px-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-900 font-sans text-[13px] font-bold cursor-pointer transition-all duration-200 hover:bg-neutral-200 hover:border-neutral-400 focus-visible:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-100 whitespace-nowrap"

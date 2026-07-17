@@ -10,6 +10,7 @@ import {
 } from '@xyflow/react';
 
 import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
 import RightSidebar from './components/RightSidebar';
 import '@xyflow/react/dist/style.css';
 
@@ -30,8 +31,9 @@ export default function App() {
     <div className="flex flex-col w-full h-screen overflow-hidden bg-neutral-0">
       <Navbar />
 
-      <main className="flex flex-row flex-grow w-full h-[calc(100vh-56px)] relative overflow-hidden">
-        <div className="flex-1 h-full relative">
+      <main className="main-workspace">
+        <Sidebar />
+        <div className="canvas-container">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -48,7 +50,6 @@ export default function App() {
             <MiniMap />
           </ReactFlow>
         </div>
-        
         <RightSidebar />
       </main>
     </div>

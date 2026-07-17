@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+:root {
+  --sans: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 @theme {
   /* Gravity Neutrals */
   --color-neutral-0: #FFFFFF;
@@ -124,8 +129,9 @@ html, body, #root {
 }
 
 .canvas-container {
-  width: 100%;
+  flex-grow: 1;
   height: 100%;
+  position: relative;
 }
 
 /* App Container Layout */

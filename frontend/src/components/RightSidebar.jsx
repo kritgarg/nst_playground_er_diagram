@@ -29,11 +29,10 @@ export default function RightSidebar() {
           Relations
         </button>
       </div>
-
       {/* Action Bar */}
-      <div className="sidebar-action-bar flex flex-col gap-3 p-4 box-border">
+      <div className="flex gap-3 p-4 box-border items-center">
         {activeTab === 'tables' && (
-          <button className="h-9 flex items-center gap-1.5 px-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-900 font-sans text-[13px] font-bold cursor-pointer transition-all duration-200 hover:bg-neutral-200 hover:border-neutral-400 focus-visible:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-100 whitespace-nowrap w-fit">
+          <button className="h-9 flex items-center gap-1.5 px-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-900 font-sans text-[13px] font-bold cursor-pointer transition-all duration-200 hover:bg-neutral-200 hover:border-neutral-400 focus-visible:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-100 whitespace-nowrap">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -42,7 +41,7 @@ export default function RightSidebar() {
           </button>
         )}
 
-        <div className="h-9 flex items-center gap-2 px-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-700 box-border transition-all duration-200 focus-within:border-brand-500 focus-within:bg-neutral-0 focus-within:ring-2 focus-within:ring-brand-100 w-full">
+        <div className="flex-1 h-9 flex items-center gap-2 px-3 bg-neutral-100 border border-neutral-300 rounded-lg text-neutral-700 box-border transition-all duration-200 focus-within:border-brand-500 focus-within:bg-neutral-0 focus-within:ring-2 focus-within:ring-brand-100">
           <svg className="shrink-0 text-neutral-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>

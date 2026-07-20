@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { fetchQuestions, fetchQuestion } from '../api';
 import './Sidebar.css';
 
-export default function Sidebar() {
+export default function Sidebar({ onQuestionLoaded }) {
   const [width, setWidth] = useState(420);
   const isResizing = useRef(false);
 
@@ -12,18 +13,13 @@ export default function Sidebar() {
   useEffect(() => {
     async function loadQuestion() {
       try {
-        const res = await fetch('http://localhost:8000/questions');
-        if (res.ok) {
-          const list = await res.json();
-          if (list && list.length > 0) {
-            const detailRes = await fetch(`http://localhost:8000/questions/${list[0].id}`);
-            if (detailRes.ok) {
-              const details = await detailRes.json();
-              setQuestionData(details);
-              setLoading(false);
-              return;
-            }
-          }
+        const list = await fetchQuestions();
+        if (list && list.length > 0) {
+          const details = await fetchQuestion(list[0].id);
+          setQuestionData(details);
+          setLoading(false);
+          if (onQuestionLoaded) onQuestionLoaded(list[0].id);
+          return;
         }
       } catch (err) {
         console.error('Error fetching question from backend:', err);
@@ -77,6 +73,7 @@ Using the above information:
     }
     
     loadQuestion();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startResizing = (e) => {

@@ -1,4 +1,4 @@
-export default function Navbar() {
+export default function Navbar({ onSubmit, onReset, submitting = false, submitError = null }) {
   return (
     <header className="h-14 min-h-[56px] bg-neutral-0 border-b border-neutral-300 flex justify-between items-center px-6 box-border z-10">
       <div className="flex items-center gap-4">
@@ -33,7 +33,11 @@ export default function Navbar() {
           </div>
         </div>
         
-        <button className="w-9 h-9 rounded-lg border border-neutral-300 bg-neutral-0 text-neutral-700 flex items-center justify-center cursor-pointer shadow-xs transition-all duration-200 hover:bg-neutral-100 hover:border-neutral-400 hover:text-neutral-900 focus-visible:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-100" title="Reset">
+        <button
+          className="w-9 h-9 rounded-lg border border-neutral-300 bg-neutral-0 text-neutral-700 flex items-center justify-center cursor-pointer shadow-xs transition-all duration-200 hover:bg-neutral-100 hover:border-neutral-400 hover:text-neutral-900 focus-visible:outline-none focus-visible:border-brand-500 focus-visible:ring-2 focus-visible:ring-brand-100"
+          title="Reset"
+          onClick={onReset}
+        >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M23 4v6h-6"></path>
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
@@ -48,9 +52,35 @@ export default function Navbar() {
           </svg>
         </button>
         
-        <button className="px-4 h-9 rounded-lg bg-brand-500 text-neutral-0 border-none font-sans text-[13px] font-bold cursor-pointer inline-flex items-center justify-center shadow-xs transition-all duration-200 hover:bg-brand-400 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-100">
-          Submit Solution
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className={`px-4 h-9 rounded-lg border-none font-sans text-[13px] font-bold cursor-pointer inline-flex items-center justify-center shadow-xs transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-100 ${
+              submitting
+                ? 'bg-brand-300 text-brand-100 cursor-wait'
+                : 'bg-brand-500 text-neutral-0 hover:bg-brand-400 hover:shadow-md'
+            }`}
+            onClick={onSubmit}
+            disabled={submitting}
+          >
+            {submitting ? (
+              <>
+                <svg className="animate-spin -ml-0.5 mr-2 h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Submitting…
+              </>
+            ) : (
+              'Submit Solution'
+            )}
+          </button>
+
+          {submitError && (
+            <span className="text-[11px] text-red-600 font-semibold max-w-[160px] truncate" title={submitError}>
+              {submitError}
+            </span>
+          )}
+        </div>
       </div>
     </header>
   );

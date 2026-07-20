@@ -7,9 +7,9 @@ __pycache__/
 .venv/
 venv/
 ENV/
-
+*.env
 # Project specific database
-validator/portal.db
+*.db
 
 # Project vendor dependencies
 validator/vendor/

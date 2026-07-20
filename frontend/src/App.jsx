@@ -13,6 +13,9 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import RightSidebar from './components/RightSidebar';
 import TableNode from './components/TableNode';
+import ValidationResult from './components/ValidationResult';
+import { submitSolution } from './api';
+import { serializeDiagram } from './diagramSerializer';
 import '@xyflow/react/dist/style.css';
 
 const nodeTypes = { tableNode: TableNode };
@@ -24,6 +27,11 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [tables, setTables] = useState([]);
+
+  const [questionId, setQuestionId] = useState(null);
+  const [validationResult, setValidationResult] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const onConnect = useCallback(
     (params) => {
@@ -90,12 +98,55 @@ export default function App() {
     setNodes((prev) => prev.filter((n) => n.id !== tableId));
   };
 
+
+  const handleQuestionLoaded = (id) => {
+    setQuestionId(id);
+  };
+
+  const handleSubmit = async () => {
+    if (!questionId) {
+      setSubmitError('No question loaded — cannot submit.');
+      return;
+    }
+    if (tables.length === 0) {
+      setSubmitError('Add at least one table before submitting.');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+    setValidationResult(null);
+
+    try {
+      const diagram = serializeDiagram(tables, edges);
+      const result = await submitSolution(questionId, diagram);
+      setValidationResult(result);
+    } catch (err) {
+      setSubmitError(err.message || 'Submission failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReset = () => {
+    setTables([]);
+    setNodes([]);
+    setEdges([]);
+    setValidationResult(null);
+    setSubmitError(null);
+  };
+
   return (
     <div className="flex flex-col w-full h-screen overflow-hidden bg-neutral-0">
-      <Navbar />
+      <Navbar
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        submitting={submitting}
+        submitError={submitError}
+      />
 
       <main className="main-workspace">
-        <Sidebar />
+        <Sidebar onQuestionLoaded={handleQuestionLoaded} />
         <div className="canvas-container">
           <ReactFlow
             nodes={nodes}
@@ -124,6 +175,11 @@ export default function App() {
           onDeleteTable={handleDeleteTable}
         />
       </main>
+
+      <ValidationResult
+        result={validationResult}
+        onClose={() => setValidationResult(null)}
+      />
     </div>
   );
 }

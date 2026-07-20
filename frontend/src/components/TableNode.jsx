@@ -19,29 +19,35 @@ export default function TableNode({ data }) {
   const columns = data.columns ?? DEFAULT_COLUMNS;
 
   return (
-    <div className="rounded-lg overflow-hidden shadow-md border border-neutral-300 bg-neutral-100 min-w-[200px]">
-      {/* Left connection handle */}
-      <Handle
-        type="source"
-        position={Position.Left}
-        className="!w-2 !h-2 !bg-neutral-400 !border-neutral-500"
-      />
-
+    <div className="rounded-lg shadow-md border border-neutral-300 bg-neutral-100 min-w-[200px]">
       {/* Header */}
-      <div className="bg-[#4a90e2] px-4 py-2 text-white text-[14px] font-bold text-center tracking-wide">
+      <div className="bg-[#4a90e2] px-4 py-2 rounded-t-lg text-white text-[14px] font-bold text-center tracking-wide">
         {data.label}
       </div>
 
       {/* Columns */}
-      <div className="bg-neutral-100">
+      <div className="bg-neutral-100 rounded-b-lg">
         {columns.map((col, i) => (
           <div
             key={i}
-            className="flex items-center justify-between px-3 py-[7px] border-t border-neutral-200"
+            className="relative flex items-center justify-between px-3 py-[7px] border-t border-neutral-200"
           >
-            {/* Left: dot + column name */}
-            <div className="flex items-center gap-2">
-              <span className="w-[7px] h-[7px] rounded-full bg-[#4a90e2] shrink-0" />
+            {/* Left: connection handles + column name */}
+            <div className="flex items-center gap-2 relative">
+              <div className="relative w-[7px] h-[7px] shrink-0 flex items-center justify-center">
+                <Handle
+                  type="target"
+                  position={Position.Left}
+                  id={`target-${col.name}`}
+                  className="!w-[7px] !h-[7px] !bg-[#4a90e2] !border-0 !rounded-full !absolute !transform-none !left-0 !top-0 !m-0"
+                />
+                <Handle
+                  type="source"
+                  position={Position.Left}
+                  id={`source-${col.name}`}
+                  className="!w-[15px] !h-[15px] !bg-transparent !border-0 !rounded-full !absolute !transform-none !left-[-4px] !top-[-4px] !m-0 z-10 cursor-pointer"
+                />
+              </div>
               <span className="text-[13px] font-medium text-neutral-800">{col.name}</span>
             </div>
 
@@ -60,13 +66,6 @@ export default function TableNode({ data }) {
           </div>
         ))}
       </div>
-
-      {/* Right connection handle */}
-      <Handle
-        type="target"
-        position={Position.Right}
-        className="!w-2 !h-2 !bg-neutral-400 !border-neutral-500"
-      />
     </div>
   );
 }

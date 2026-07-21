@@ -86,12 +86,12 @@ export default function useAppLogic() {
   };
 
   const handleSubmit = async () => {
-    if (!questionId) {
-      setSubmitError('No question loaded — cannot submit.');
-      return;
-    }
     if (tables.length === 0) {
       setSubmitError('Add at least one table before submitting.');
+      return;
+    }
+    if (!questionId) {
+      setSubmitError('No question loaded — cannot submit.');
       return;
     }
 
@@ -117,6 +117,13 @@ export default function useAppLogic() {
     setValidationResult(null);
     setSubmitError(null);
   };
+
+  if (typeof window !== 'undefined' && window.Cypress) {
+    window.__testTables = tables;
+    window.__testConnect = (params) => {
+      onConnect(params);
+    };
+  }
 
   return {
     nodes, edges, tables,

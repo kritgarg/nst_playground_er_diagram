@@ -36,7 +36,7 @@ export default function AddTableModal({ onConfirm, onCancel }) {
         <input
           ref={inputRef}
           className="h-9 w-full px-3 rounded-lg border border-neutral-300 bg-neutral-100 font-sans text-[13px] text-neutral-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-all placeholder-neutral-500"
-          placeholder="e.g. Hospitals"
+          placeholder="Enter table name..."
           value={tableName}
           onChange={(e) => setTableName(e.target.value)}
           onKeyDown={handleKeyDown}

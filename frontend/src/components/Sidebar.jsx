@@ -68,6 +68,7 @@ Using the above information:
    - Relationships between entities
    - Cardinality of each relationship`
       });
+      if (onQuestionLoaded) onQuestionLoaded('fallback-question');
       setLoading(false);
     }
     

@@ -45,6 +45,10 @@ export default function RightSidebar({ tables = [], edges = [], setEdges, onAddT
     setEdges(eds => eds.map(e => e.id === edgeId ? { ...e, data } : e));
   };
 
+  const handleDeleteEdge = (edgeId) => {
+    setEdges(eds => eds.filter(e => e.id !== edgeId));
+  };
+
   const filteredTables = tables.filter((t) =>
     t.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -188,6 +192,7 @@ export default function RightSidebar({ tables = [], edges = [], setEdges, onAddT
                 edge={edge}
                 tables={tables}
                 onUpdate={handleUpdateEdge}
+                onDelete={() => handleDeleteEdge(edge.id)}
               />
             ))
           )}

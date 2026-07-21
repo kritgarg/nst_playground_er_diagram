@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from er_validator import store
-from er_validator.core import validate
-from er_validator.engine.base import EngineError
-from er_validator.name_matcher import DEFAULT_SIMILARITY_THRESHOLD, compare_entities
-from er_validator.schema import SchemaError
+from app.db import store
+from app.validator.core import validate
+from app.validator.engine.base import EngineError
+from app.validator.name_matcher import DEFAULT_SIMILARITY_THRESHOLD, compare_entities
+from app.validator.schema import SchemaError
 
 app = FastAPI()
 
@@ -16,7 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-store.init_db()
+@app.on_event("startup")
+def on_startup():
+    store.init_db()
 
 @app.get('/health')
 def health():
@@ -66,7 +68,7 @@ def questions_create(payload: dict = Body(...)):
 
 
 @app.get('/questions/{question_id}')
-def questions_get(question_id: int, include_solution: bool = False):
+def questions_get(question_id: str, include_solution: bool = False):
     question = store.get_question(question_id)
     if question is None:
         raise HTTPException(404, f'no question with id {question_id}')
@@ -75,13 +77,13 @@ def questions_get(question_id: int, include_solution: bool = False):
     return question
 
 @app.delete('/questions/{question_id}')
-def questions_delete(question_id: int):
+def questions_delete(question_id: str):
     if not store.delete_question(question_id):
         raise HTTPException(404, f'no question with id {question_id}')
     return {'ok': True }
 
 @app.post('/questions/{question_id}/submit')
-def questions_submit(question_id: int, payload: dict = Body(...)):
+def questions_submit(question_id: str, payload: dict = Body(...)):
     question = store.get_question(question_id)
     if question is None:
         raise HTTPException(404, f'no question with id {question_id}')

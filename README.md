@@ -193,7 +193,7 @@ Supported `cardinality` values: `many_to_one`, `one_to_one`, `one_to_many` (norm
 |-------|-----------|
 | Frontend | React 19, Vite, TailwindCSS 4, React Flow (`@xyflow/react`) |
 | Backend | Python, FastAPI, Uvicorn |
-| Database | SQLite (via `store.py`) |
+| Database | Neon PostgreSQL (via SQLAlchemy ORM & `store.py`) |
 | Graph isomorphism | [Bliss](https://users.aalto.fi/~tjunttil/bliss/) (native binary) / pure-Python fallback |
 | Name matching | Custom Jaro-Winkler + Levenshtein + ontology-based semantic matching |
 
@@ -201,6 +201,8 @@ Supported `cardinality` values: `many_to_one`, `one_to_one`, `one_to_many` (norm
 
 ## Development Notes
 
-- The SQLite database (`portal.db`) is auto-created at `validator/portal.db` on first startup and seeded from `seed_questions.json` if the questions table is empty.
+- Configure `DATABASE_URL` in `backend/.env` with your Neon PostgreSQL connection string (e.g. `postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require`).
+- Tables are auto-created on first startup via `store.init_db()` and seeded from `seed_questions.json` if the questions table is empty.
 - The `ontology.json` file contains domain-specific synonym groups (e.g., `["user", "member", "account"]`) used for semantic name matching. Add new groups here to expand coverage.
 - The `VALIDATOR_ALGORITHM` environment variable controls which isomorphism engine is used (`bliss` or `native`).
+

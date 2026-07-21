@@ -294,4 +294,3 @@ def compare_entities(expected_names, current_names,
             'final_score': score,
         },
     }
-

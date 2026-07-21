@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+
 class SchemaError(ValueError):
     """Raised when an incoming diagram document is malformed."""
 

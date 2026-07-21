@@ -1,7 +1,36 @@
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# Virtual environments
 .venv/
 venv/
-*.db
+env/
+ENV/
+
+# Secret & local configuration files
+.env
+.env.local
+.env.*
+
+# Compiled vendor binaries (rebuilt cleanly inside Docker container)
 vendor/
+
+# Version control and IDEs
 .git/
+.gitignore
+.vscode/
+.idea/
+
+# Docker build metadata
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

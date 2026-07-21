@@ -3,10 +3,9 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
-    volumes:
-      - db-data:/app/data
     environment:
       - VALIDATOR_ALGORITHM=bliss
+      - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require}
     restart: unless-stopped
 
   frontend:
@@ -19,6 +18,3 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
-
-volumes:
-  db-data:

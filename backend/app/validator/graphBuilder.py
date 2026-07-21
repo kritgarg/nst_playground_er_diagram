@@ -76,4 +76,3 @@ def build_graph(diagram, color_table):
         graph.edges.append((destination_marker, vertex_ids[relationship.end_field]))
 
     return graph
-            

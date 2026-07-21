@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .base import ColoredGraph, EngineError, EngineResult, IsomorphismEngine
 
-VENDOR_DIR = Path(__file__).resolve().parents[2] / 'vendor'
+VENDOR_DIR = Path(__file__).resolve().parents[4] / 'vendor'
 _CYCLE_RE = re.compile(r'\(([^()]+)\)')
 
 
